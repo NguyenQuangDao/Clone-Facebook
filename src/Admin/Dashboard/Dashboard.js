@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import "./Dashboard.scss";
 import {
   UilThumbsUp,
@@ -49,16 +49,16 @@ function Dashboard() {
   };
   ///sign out///
   // isModalOpenSignOut
-  const admin_isModalOpenSignOut = () => {
+  const admin_isModalOpenSignOut = useCallback(() => {
     setIsModalOpenSignOut_admin(true);
-  };
-  const admin_handleOkSignOut = () => {
+  },[]);
+  const admin_handleOkSignOut = useCallback(() => {
     auth.signOut();
     navigateSignout("/login");
-  };
-  const admin_handleCancelSignOut = () => {
+  },[])
+  const admin_handleCancelSignOut =useCallback( () => {
     setIsModalOpenSignOut_admin(false);
-  };
+  },[]);
   // total Posts
   useEffect(() => {
     const unSub = onSnapshot(collection(db, "posts"), (snapshot) => {
@@ -135,6 +135,9 @@ function Dashboard() {
   const handleCancel = () => {
     setOpen(false);
   };
+
+  //search
+  const [searchValue, setSearchValue] = useState("")
   return (
     <div id="AdMin">
       <NavAdmin
@@ -143,6 +146,7 @@ function Dashboard() {
         admin_handleCancelSignOut={admin_handleCancelSignOut}
         isModalOpenSignOuts_admin={isModalOpenSignOuts_admin}
         addClass={addClass}
+        searchValue={searchValue}
       />
       {/* <!-- dashboard --> */}
       <section className="dashboard">
@@ -151,7 +155,7 @@ function Dashboard() {
           <UilBars className="i UilBars" onClick={modeToggle} />
           <div className="search-box">
             <UilSearch className="i" />
-            <input type="text" placeholder="Search here..." />
+            <input type="text" placeholder="Search here..." value={searchValue} onChange={e=>setSearchValue(e.target.value)}/>
           </div>
           <Avatar className="img_Avta" src={user.photoURL}>
             {user.photoURL

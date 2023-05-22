@@ -25,6 +25,7 @@ function ModalPost() {
   const [isModalOpenThinking, setIsModalOpenThinking] = useState(false);
   const [valueInputPost, setValueInputPost] = useState("");
   const [imgPost, setImgPost] = useState(null);
+  console.log(imgPost);
   //emoji
   const addEmoji = (e) => {
     let sym = e.unified.split("-");
@@ -52,10 +53,10 @@ function ModalPost() {
       const storageRef = ref(storage, "Posts/" + uuid());
       const uploadTask = uploadBytesResumable(storageRef, imgPost);
       uploadTask.on(
-        (error) => { },
+        (error) => { console.log(error); },
         () => {
           getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
-            await addDoc(collection(db, "posts"), {
+            addDoc(collection(db, "posts"), {
               uid: user.uid,
               photoURL: user.photoURL,
               displayName: user.displayName,
@@ -64,7 +65,7 @@ function ModalPost() {
               timestamp: serverTimestamp(),
             });
 
-            await updateDoc(doc(db, "usersPosts", user.uid), {
+            updateDoc(doc(db, "usersPosts", user.uid), {
               messages: arrayUnion({
                 id: uuid(),
                 uid: user.uid,
@@ -78,6 +79,9 @@ function ModalPost() {
           });
         }
       );
+      setIsModalOpenThinking(false);
+      setLoadingModal(false);
+      setShowEmojis(false);
     } else {
       await addDoc(collection(db, "posts"), {
         uid: user.uid,
@@ -98,6 +102,24 @@ function ModalPost() {
         }),
       });
     }
+    await addDoc(collection(db, "posts"), {
+      uid: user.uid,
+      photoURL: user.photoURL,
+      displayName: user.displayName,
+      valueInputPost:valueInputPost,
+      timestamp: serverTimestamp(),
+    });
+
+    await updateDoc(doc(db, "usersPosts", user.uid), {
+      messages: arrayUnion({
+        id: uuid(),
+        uid: user.uid,
+        photoURL: user.photoURL,
+        displayName: user.displayName,
+        valueInputPost:valueInputPost,
+        timestamp: Timestamp.now(),
+      }),
+    });
     setValueInputPost("");
     setImgPost(null);
     setIsModalOpenThinking(false);
@@ -112,8 +134,8 @@ function ModalPost() {
   const showModal = () => {
     setIsModalOpenThinking(true);
   };
-  const handleOk = () => {
-    handlePost();
+  const handleOk = async () => {
+    await handlePost();
   };
   const handleCancel = () => {
     setIsModalOpenThinking(false);

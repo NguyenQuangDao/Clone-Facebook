@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./Register.scss";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import {
@@ -36,9 +36,10 @@ function Register() {
     };
   }, [AvtImage]);
   //register
+  const inputRefName = useRef()
   const onSubmitRegister = async (e) => {
     e.preventDefault();
-    const displayName = e.target[0].value;
+    const displayName = inputRefName.current.value;
     const email = e.target[1].value;
     const password = e.target[2].value;
     const PasswordConfirm = e.target[3].value;
@@ -99,7 +100,7 @@ function Register() {
   };
   return (
     <div className="register">
-      
+
       {/* error */}
       {setError}
       {/* error */}
@@ -124,6 +125,7 @@ function Register() {
                           type="text"
                           name="username"
                           required
+                          ref={inputRefName}
                         />
                       </div>
                     </div>

@@ -3,7 +3,7 @@ import { initializeApp } from "firebase/app";
 import { getAuth, connectAuthEmulator } from 'firebase/auth';
 import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore'
 import { connectStorageEmulator, getStorage } from "firebase/storage";
-
+import { getDatabase } from 'firebase/database';
 const firebaseConfig = {
   apiKey: "AIzaSyBC-rZAPSohVSqRjn1SuiPVrgie_rs-CPM",
   authDomain: "solutionchallengehumg2023.firebaseapp.com",
@@ -20,9 +20,11 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app)
 const db = getFirestore(app)
 const storage = getStorage();
+const database = getDatabase(app);
+
 // firebaseEmulator
 // connectAuthEmulator(auth, "http://localhost:9099");
 // if (window.location.hostname === 'localhost') {
 //   connectFirestoreEmulator(db, 'localhost', 8085);
 // }
-export { auth, db, storage }
+export { auth, db, storage, database }

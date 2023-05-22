@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import "./NavAdmin.scss";
 import { UilEstate, UilSignout, UilMoon } from "@iconscout/react-unicons";
 import { CameraOutlined } from "@ant-design/icons";
 import { Modal } from "antd";
 import { Link } from "react-router-dom";
-
+import BaoDong from '../../components/Share/Tieng-coi-canh-bao-www_tiengdong_com (mp3cut.net).mp3'
+import { getDatabase, ref, onValue, off } from 'firebase/database';
+import { database } from "../../Firebase/Config";
 function NavAdmin(props) {
   const {
     admin_isModalOpenSignOut,
@@ -13,6 +15,44 @@ function NavAdmin(props) {
     isModalOpenSignOuts_admin,
     addClass,
   } = props;
+  const [data, setData] = useState(null);
+  useEffect(() => {
+    // Lấy tham chiếu đến nút trong Realtime Database
+    const databaseRef = ref(database, 'D101');
+    // Lắng nghe sự thay đổi dữ liệu
+    const onDataChange = onValue(databaseRef, (snapshot) => {
+      // snapshot.val() chứa dữ liệu lấy từ Realtime Database
+      const newData = snapshot.val();
+      setData(newData);
+    });
+
+    // Cleanup: Hủy lắng nghe khi component bị unmount
+    return () => {
+      off(databaseRef, onDataChange);
+    };
+  }, []);
+
+
+
+
+
+  const handleCanhBao = () => {
+ const text = 'Violence Dectected';
+    const value = new SpeechSynthesisUtterance(text);
+    value.lang = 'vi-VN';
+    window.speechSynthesis.speak(value);
+  }
+  useEffect(() => {
+    handleCanhBao()
+  }, [data]);
+
+
+
+
+
+
+  console.log(data);
+
   return (
     <nav className={addClass == "open" ? "open" : "close"}>
       <div className="logo-name">
@@ -44,6 +84,16 @@ function NavAdmin(props) {
               </Link>
             </span>
           </li>
+
+          <li>
+            <span onClick={ handleCanhBao}>
+              {/* <Link to="/admin" style={{ display: 'flex' }}> */}
+              <UilEstate className="i" />
+              <p className="link-name">Cảnh Báo</p>
+              {/* </Link> */}
+            </span>
+          </li>
+          {/* <li><audio id="audio" src={BaoDong}></audio></li> */}
         </ul>
 
         <ul className="logout-mode">
