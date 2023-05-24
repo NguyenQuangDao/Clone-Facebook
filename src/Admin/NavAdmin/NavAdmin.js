@@ -45,6 +45,7 @@ function NavAdmin(props) {
   useEffect(() => {
     handleCanhBao()
   }, [data]);
+  console.log(data);
 
 
 
